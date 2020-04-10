@@ -6,7 +6,7 @@ public class Level : MonoBehaviour
 {
     private const float CAMERA_ORTHO_SIZE = 50f;
     private const float BLOCK_WIDTH = 10f;
-    private const float HEAD_HEIGHT = 5.6f;
+    private const float HEAD_HEIGHT = 21f;
     private const float BLOCK_MOVE_SPEED = 30f;
     private const float BLOCK_DESTROY_X_POSITION = -100f;
     private const float BLOCK_SPAWN_X_POSITION = 100f;
@@ -115,6 +115,7 @@ public class Level : MonoBehaviour
     private void CreateGapBlock(float gapY, float gapSize, float xPosition) 
     {
         CreateBlock(gapY - gapSize * .5f, xPosition, true);
+        CreateBlock(.5f, xPosition, true);
         CreateBlock(CAMERA_ORTHO_SIZE * 2f - gapY - gapSize * .5f, xPosition, false);
         blocksSpawned++;
         SetDifficulty(GetDifficulty());
@@ -129,15 +130,20 @@ public class Level : MonoBehaviour
         float blockHeadYPosition;
         if (createBotton)
         {
-            blockHeadYPosition = -CAMERA_ORTHO_SIZE + height - HEAD_HEIGHT * .5f;
+            blockHeadYPosition = -CAMERA_ORTHO_SIZE + HEAD_HEIGHT * .5f;
+           
         }
         else
         {
-            blockHeadYPosition = +CAMERA_ORTHO_SIZE - height + HEAD_HEIGHT * .5f;
+            blockHeadYPosition = +CAMERA_ORTHO_SIZE - HEAD_HEIGHT * .5f;
         }
         Transform blockHead = Instantiate(GameAssets.getInstance().pfBlockHead);
         blockHead.position = new Vector3(xPosition, blockHeadYPosition);
-
+        blockHead.localScale = new Vector3(1, 0.5f, 1);
+        if (!createBotton)
+        {
+            blockHead.Rotate(0, 180, 180);
+        }
         //Set up Block Body
 
         //Set the block Up or Down
@@ -154,12 +160,10 @@ public class Level : MonoBehaviour
         blockBody.position = new Vector3(xPosition, blockBodyYPosition);
 
 
-        SpriteRenderer blockBodyRenderer = blockBody.GetComponent<SpriteRenderer>();
-        blockBodyRenderer.size = new Vector2(BLOCK_WIDTH, height);
+        SpriteRenderer blockHeadRenderer = blockHead.GetComponent<SpriteRenderer>();
+        blockHeadRenderer.size = new Vector2(BLOCK_WIDTH, height);
 
-        BoxCollider2D blockBodyBoxCollider = blockBody.GetComponent<BoxCollider2D>();
-        blockBodyBoxCollider.size = new Vector2(BLOCK_WIDTH, height);
-        blockBodyBoxCollider.offset = new Vector2(0f, height * .5f);
+        PolygonCollider2D blockHeadPolygonCollider = blockHead.GetComponent<PolygonCollider2D>();
 
         Block block = new Block(blockHead, blockBody);
         blockList.Add(block);
