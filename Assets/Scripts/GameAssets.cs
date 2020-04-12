@@ -18,7 +18,6 @@ public class GameAssets : MonoBehaviour
     }
 
 
-    public Sprite BlockHead;
     public Transform pfBlockHead;
     public Transform pfBlockBody;
 }
