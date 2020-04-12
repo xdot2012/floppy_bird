@@ -169,6 +169,12 @@ public class Level : MonoBehaviour
         blockList.Add(block);
     }
 
+    private void Restart()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+    }
+
+
 
     //Represents a Entire Block
     private class Block
