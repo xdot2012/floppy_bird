@@ -39,8 +39,15 @@ public class Level : MonoBehaviour
 
     private void Update()
     {
-        handleBlockMovement();
-        handleBlockSpawning();
+        if (!Player.dead)
+        {
+            handleBlockMovement();
+            handleBlockSpawning();
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.Space)) { Restart(); }
+        }
     }
 
     private void handleBlockSpawning()
