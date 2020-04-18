@@ -40,8 +40,15 @@ public class Level : MonoBehaviour
 
     private void Update()
     {
-        handleBlockMovement();
-        handleBlockSpawning();
+        if (!Player.dead)
+        {
+            handleBlockMovement();
+            handleBlockSpawning();
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.Space)) { Restart(); }
+        }
     }
 
     private void handleBlockSpawning()
@@ -185,6 +192,12 @@ public class Level : MonoBehaviour
         Block block = new Block(blockHead, blockBody);
         blockList.Add(block);
     }
+
+    private void Restart()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+    }
+
 
 
     //Represents a Entire Block
