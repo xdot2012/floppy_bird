@@ -8,8 +8,9 @@ public class Level : MonoBehaviour
     private const float BLOCK_WIDTH = 10f;
     private const float HEAD_HEIGHT = 21f;
     private const float BLOCK_MOVE_SPEED = 30f;
-    private const float BLOCK_DESTROY_X_POSITION = -100f;
-    private const float BLOCK_SPAWN_X_POSITION = 100f;
+    private const float BLOCK_DESTROY_X_POSITION = -150f;
+    private const float BLOCK_SPAWN_X_POSITION = 150f;
+    private const float MIN_GAP = 0.8f;
 
     private List<Block> blockList;
     private int blocksSpawned;
@@ -50,14 +51,7 @@ public class Level : MonoBehaviour
         {
             //Time to Spawn another block
             blockSpawnTimer = blockSpawnTimerMax;
-
-            float heightHeadLimit = 10f;
-            float minHeight = gapSize * .5f + heightHeadLimit;
-            float totalHeight = CAMERA_ORTHO_SIZE * 2f;
-            float maxHeight = totalHeight - gapSize * .5f - heightHeadLimit;
-
-            float height = Random.Range(minHeight, maxHeight);
-            CreateGapBlock(height, gapSize, BLOCK_SPAWN_X_POSITION);
+            CreateGapBlock(BLOCK_SPAWN_X_POSITION);
 
         }
     }
@@ -85,19 +79,19 @@ public class Level : MonoBehaviour
         {
             case Difficulty.Easy:
                 gapSize = 50f;
-                blockSpawnTimerMax = 1.2f;
+                blockSpawnTimerMax = 4f;
                 break;
             case Difficulty.Medium:
                 gapSize = 40f;
-                blockSpawnTimerMax = 1.1f;
+                blockSpawnTimerMax = 3.5f;
                 break;
             case Difficulty.Hard:
                 gapSize = 33f;
-                blockSpawnTimerMax = 1f;
+                blockSpawnTimerMax = 3f;
                 break;
             case Difficulty.Impossible:
                 gapSize = 24f;
-                blockSpawnTimerMax = .7f;
+                blockSpawnTimerMax = 2f;
                 break;
         }
     }
@@ -112,18 +106,37 @@ public class Level : MonoBehaviour
     
     
     //Set up two Blocks with a Gap in the middle
-    private void CreateGapBlock(float gapY, float gapSize, float xPosition) 
+    private void CreateGapBlock(float xPosition) 
     {
-        CreateBlock(gapY - gapSize * .5f, xPosition, true);
-        CreateBlock(.5f, xPosition, true);
-        CreateBlock(CAMERA_ORTHO_SIZE * 2f - gapY - gapSize * .5f, xPosition, false);
+        float randomize = Random.Range(0f, 1f);
+        float scale = Random.Range(0.5f, 2f);
+        // Only Bottom
+        if (randomize <= 0.35f)
+        {
+            CreateBlock(scale, xPosition, true);
+        }
+        // Only Top
+        else if (randomize <= 0.7f)
+        {
+            CreateBlock(scale, xPosition, false);
+        }
+        // Top and Bottom
+        else
+        {
+            float maxTop = (2f - scale);
+            // Check if Minimun Space
+            if (maxTop < MIN_GAP) maxTop = 0.5f;
+            float scaleTop = Random.Range(0.5f, maxTop);
+            CreateBlock(scale, xPosition, true);
+            CreateBlock(scaleTop, xPosition, false);
+        }
         blocksSpawned++;
         SetDifficulty(GetDifficulty());
     }
 
-    private void CreateBlock(float height, float xPosition, bool createBotton)
+    private void CreateBlock(float randScale, float xPosition, bool createBotton)
     {
-
+        
         //Set up Block Head
 
         //Set the block Up or Down
@@ -137,9 +150,15 @@ public class Level : MonoBehaviour
         {
             blockHeadYPosition = +CAMERA_ORTHO_SIZE - HEAD_HEIGHT * .5f;
         }
+
         Transform blockHead = Instantiate(GameAssets.getInstance().pfBlockHead);
+
+        //Set Scale
+        blockHead.localScale = new Vector3(1, randScale, 1);
+
+        //Set Position
+        //xPosition = xPosition + Random.Range(-25f, 25f);
         blockHead.position = new Vector3(xPosition, blockHeadYPosition);
-        blockHead.localScale = new Vector3(1, 0.5f, 1);
         if (!createBotton)
         {
             blockHead.Rotate(0, 180, 180);
@@ -161,8 +180,6 @@ public class Level : MonoBehaviour
 
 
         SpriteRenderer blockHeadRenderer = blockHead.GetComponent<SpriteRenderer>();
-        blockHeadRenderer.size = new Vector2(BLOCK_WIDTH, height);
-
         PolygonCollider2D blockHeadPolygonCollider = blockHead.GetComponent<PolygonCollider2D>();
 
         Block block = new Block(blockHead, blockBody);
@@ -181,6 +198,7 @@ public class Level : MonoBehaviour
         {
             this.blockHeadTransform = blockHeadTransform;
             this.blockBodyTransform = blockBodyTransform;
+
         }
 
         public void Move()
@@ -199,5 +217,6 @@ public class Level : MonoBehaviour
             Destroy(blockHeadTransform.gameObject);
             Destroy(blockBodyTransform.gameObject);
         }
+
     }
 }
