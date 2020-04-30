@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private const float JUMP_AMOUNT = 35f;
+    private float JUMP_AMOUNT = 15f;
+    private float BOOST = 3f;
     private Rigidbody2D rigidbody2D;
     private bool P;
 
@@ -23,11 +24,22 @@ public class Player : MonoBehaviour
     {
         if (TestInput())
         {
-            rigidbody2D.gravityScale = -JUMP_AMOUNT;
+            if (rigidbody2D.gravityScale == JUMP_AMOUNT * BOOST) {
+                rigidbody2D.gravityScale = -JUMP_AMOUNT;
+            }else{
+                rigidbody2D.gravityScale = -JUMP_AMOUNT * BOOST;
+            }
         }
         else
         {
-            rigidbody2D.gravityScale = JUMP_AMOUNT;
+            if (rigidbody2D.gravityScale == -JUMP_AMOUNT * BOOST)
+            {
+                rigidbody2D.gravityScale = JUMP_AMOUNT;
+            }
+            else
+            {
+                rigidbody2D.gravityScale = JUMP_AMOUNT * BOOST;
+            }
         }
         transform.eulerAngles = new Vector3(0, 0, rigidbody2D.velocity.y * .30f);
     }
