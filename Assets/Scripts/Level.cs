@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Level : MonoBehaviour
 {
     private const float CAMERA_ORTHO_SIZE = 50f;
@@ -12,11 +13,15 @@ public class Level : MonoBehaviour
     private const float BLOCK_SPAWN_X_POSITION = 150f;
     private const float MIN_GAP = 0.8f;
 
+    // DEFINE TYPE OF BLOCKS IN THE LEVEL
+    private const int BLOCK_TYPE = 3;
+
     private List<Block> blockList;
     private int blocksSpawned;
     private float blockSpawnTimer;
     private float blockSpawnTimerMax;
     private float gapSize;
+
 
     public enum Difficulty
     {
@@ -31,7 +36,9 @@ public class Level : MonoBehaviour
         blockList = new List<Block>();
         blockSpawnTimerMax = 1f;
         SetDifficulty(Difficulty.Easy);
+        SetStage();
     }
+
 
     private void Start()
     {
@@ -143,8 +150,10 @@ public class Level : MonoBehaviour
 
     private void CreateBlock(float randScale, float xPosition, bool createBotton)
     {
-        
+
         //Set up Block Head
+        //Choose block type
+        Transform blockHead = ChooseBlockHead(BLOCK_TYPE);
 
         //Set the block Up or Down
         float blockHeadYPosition;
@@ -158,7 +167,6 @@ public class Level : MonoBehaviour
             blockHeadYPosition = +CAMERA_ORTHO_SIZE - HEAD_HEIGHT * .5f;
         }
 
-        Transform blockHead = Instantiate(GameAssets.getInstance().pfBlockHead);
 
         //Set Scale
         blockHead.localScale = new Vector3(1, randScale, 1);
@@ -173,7 +181,9 @@ public class Level : MonoBehaviour
         //Set up Block Body
 
         //Set the block Up or Down
-        Transform blockBody = Instantiate(GameAssets.getInstance().pfBlockBody);
+        //Choose block type
+        Transform blockBody = ChooseBlockBody(BLOCK_TYPE);
+        
         float blockBodyYPosition;
         if (createBotton)
         {
@@ -184,7 +194,6 @@ public class Level : MonoBehaviour
             blockBody.localScale = new Vector3(1, -1, 1);
         }
         blockBody.position = new Vector3(xPosition, blockBodyYPosition);
-
 
         SpriteRenderer blockHeadRenderer = blockHead.GetComponent<SpriteRenderer>();
         PolygonCollider2D blockHeadPolygonCollider = blockHead.GetComponent<PolygonCollider2D>();
@@ -197,8 +206,6 @@ public class Level : MonoBehaviour
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
     }
-
-
 
     //Represents a Entire Block
     private class Block
@@ -232,4 +239,100 @@ public class Level : MonoBehaviour
         }
 
     }
+
+    //Choose block head type
+    private Transform ChooseBlockHead(int level)
+    {
+        if (level == 1)
+        {
+            return Instantiate(GameAssets.getInstance().pfBlockHead);
+        }
+        else if (level == 2)
+        {
+            return Instantiate(GameAssets.getInstance().pfBlockHead2);
+        }
+        else if (level == 3)
+        {
+            return Instantiate(GameAssets.getInstance().pfBlockHeadWax);
+        }
+        else
+        {
+            return Instantiate(GameAssets.getInstance().pfBlockHead);
+        }
+    }
+
+    //Choose block head type
+    private Transform ChooseBlockBody(int level)
+    {
+        if (level == 1)
+        {
+            return Instantiate(GameAssets.getInstance().pfBlockBody);
+        }
+        else if (level == 2)
+        {
+            return Instantiate(GameAssets.getInstance().pfBlockBody2);
+        }
+        else if (level == 3)
+        {
+            return Instantiate(GameAssets.getInstance().pfBlockBodyWax);
+        }
+        else
+        {
+            return Instantiate(GameAssets.getInstance().pfBlockBody);
+        }
+    }
+
+    private void SetStage()
+    {
+        // Set Floor and Roof
+        if (BLOCK_TYPE == 1)
+        {
+            Transform Background = Instantiate(GameAssets.getInstance().pfBackground);
+            Transform Ground = Instantiate(GameAssets.getInstance().pfGround);
+            Transform Roof = Instantiate(GameAssets.getInstance().pfGround);
+
+            Background.position = new Vector3(0, 0, 0);
+            Ground.position = new Vector3(0, 50, 0);
+            Ground.Rotate(0, 180, 180);
+            Roof.position = new Vector3(0, -50, 0);
+        }
+        else if (BLOCK_TYPE == 2)
+        {
+            Transform Background = Instantiate(GameAssets.getInstance().pfBackground2);
+            Transform Ground = Instantiate(GameAssets.getInstance().pfGround2);
+            Transform Roof = Instantiate(GameAssets.getInstance().pfGround2);
+
+            Background.position = new Vector3(0, 0, 0);
+            Ground.position = new Vector3(0, 50, 0);
+            Ground.Rotate(0, 180, 180);
+            Roof.position = new Vector3(0, -50, 0);
+        }
+        else if (BLOCK_TYPE == 3)
+        {
+            Transform Background = Instantiate(GameAssets.getInstance().pfBackgroundWax);
+            Transform Ground = Instantiate(GameAssets.getInstance().pfGroundWax);
+            Transform Roof = Instantiate(GameAssets.getInstance().pfGroundWax);
+
+            Background.position = new Vector3(0, 0, 0);
+            Ground.position = new Vector3(0, 50, 0);
+            Ground.Rotate(0, 180, 180);
+            Roof.position = new Vector3(0, -50, 0);
+
+        }
+        else
+        {
+            Transform Background = Instantiate(GameAssets.getInstance().pfBackground);
+            Transform Ground = Instantiate(GameAssets.getInstance().pfGround);
+            Transform Roof = Instantiate(GameAssets.getInstance().pfGround);
+
+            Background.position = new Vector3(0, 0, 0);
+            Ground.position = new Vector3(0, 50, 0);
+            Ground.Rotate(0, 180, 180);
+            Roof.position = new Vector3(0, -50, 0);
+        }
+
+
+
+    }
 }
+
