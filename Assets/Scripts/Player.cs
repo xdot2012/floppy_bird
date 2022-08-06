@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     private bool P;
 
     public static bool dead;
+    public Animator animator;
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +18,7 @@ public class Player : MonoBehaviour
         rigidbody2D = GetComponent<Rigidbody2D>();
         P = false;
         dead = false;
+        animator.SetBool("isDead", false);
     }
 
     // Update is called once per frame
@@ -24,6 +26,7 @@ public class Player : MonoBehaviour
     {
         if (TestInput())
         {
+            animator.SetBool("isFalling", false);
             if (rigidbody2D.gravityScale == JUMP_AMOUNT * BOOST) {
                 rigidbody2D.gravityScale = -JUMP_AMOUNT;
             }else{
@@ -32,6 +35,7 @@ public class Player : MonoBehaviour
         }
         else
         {
+            animator.SetBool("isFalling", true);
             if (rigidbody2D.gravityScale == -JUMP_AMOUNT * BOOST)
             {
                 rigidbody2D.gravityScale = JUMP_AMOUNT;
@@ -65,6 +69,8 @@ public class Player : MonoBehaviour
     //Colider
     private void OnTriggerEnter2D(Collider2D collider)
     {
+        animator.SetBool("isDead", true);
+        GameAssets.getInstance().playDeath();
         Debug.Log("Dead");
         Pause();
         dead = true;

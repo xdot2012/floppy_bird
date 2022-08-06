@@ -42,6 +42,7 @@ public class Level : MonoBehaviour
 
     private void Start()
     {
+        GameAssets.getInstance().playStart();
        // CreateGapBlock(50f, 20f, 20f);
     }
 
@@ -123,7 +124,7 @@ public class Level : MonoBehaviour
     private void CreateGapBlock(float xPosition) 
     {
         float randomize = Random.Range(0f, 1f);
-        float scale = Random.Range(0.5f, 2f);
+        float scale = Random.Range(1f, 5f);
         // Only Bottom
         if (randomize <= 0.35f)
         {
@@ -159,25 +160,27 @@ public class Level : MonoBehaviour
         float blockHeadYPosition;
         if (createBotton)
         {
-            blockHeadYPosition = -CAMERA_ORTHO_SIZE + HEAD_HEIGHT * .5f;
+            blockHeadYPosition = -CAMERA_ORTHO_SIZE + HEAD_HEIGHT * .35f * randScale;
            
         }
         else
         {
-            blockHeadYPosition = +CAMERA_ORTHO_SIZE - HEAD_HEIGHT * .5f;
+            blockHeadYPosition = +CAMERA_ORTHO_SIZE - HEAD_HEIGHT * .35f * randScale;
         }
 
 
         //Set Scale
-        blockHead.localScale = new Vector3(1, randScale, 1);
+        //blockHead.localScale = new Vector3(1, randScale, 1);
 
         //Set Position
         //xPosition = xPosition + Random.Range(-25f, 25f);
         blockHead.position = new Vector3(xPosition, blockHeadYPosition);
+
         if (!createBotton)
         {
             blockHead.Rotate(0, 180, 180);
         }
+        blockHead.Rotate(0, 0, Random.Range(50f, -50f));
         //Set up Block Body
 
         //Set the block Up or Down
@@ -188,12 +191,20 @@ public class Level : MonoBehaviour
         if (createBotton)
         {
             blockBodyYPosition = -CAMERA_ORTHO_SIZE;
+
+            //Set Scale
+            blockBody.localScale = new Vector3(1, randScale, 1);
+
         } else
         {
             blockBodyYPosition = +CAMERA_ORTHO_SIZE;
-            blockBody.localScale = new Vector3(1, -1, 1);
+
+            //Set Scale
+            blockBody.localScale = new Vector3(1, -randScale, 1);
         }
         blockBody.position = new Vector3(xPosition, blockBodyYPosition);
+
+
 
         SpriteRenderer blockHeadRenderer = blockHead.GetComponent<SpriteRenderer>();
         PolygonCollider2D blockHeadPolygonCollider = blockHead.GetComponent<PolygonCollider2D>();
@@ -243,6 +254,8 @@ public class Level : MonoBehaviour
     //Choose block head type
     private Transform ChooseBlockHead(int level)
     {
+        return Instantiate(GameAssets.getInstance().pfPipa);
+
         if (level == 1)
         {
             return Instantiate(GameAssets.getInstance().pfBlockHead);
@@ -264,6 +277,8 @@ public class Level : MonoBehaviour
     //Choose block head type
     private Transform ChooseBlockBody(int level)
     {
+        return Instantiate(GameAssets.getInstance().pfCerol);
+
         if (level == 1)
         {
             return Instantiate(GameAssets.getInstance().pfBlockBody);
@@ -284,6 +299,7 @@ public class Level : MonoBehaviour
 
     private void SetStage()
     {
+        return;
         // Set Floor and Roof
         if (BLOCK_TYPE == 1)
         {

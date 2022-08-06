@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameAssets : MonoBehaviour
 {
     public static GameAssets instance;
+    public AudioSource audioSource;
+    private float volume = 5f;
 
     public static GameAssets getInstance() 
     {
@@ -15,6 +17,9 @@ public class GameAssets : MonoBehaviour
     {
         instance = this;
     }
+    public Transform pfPipa;
+    public Transform pfRabiola;
+    public Transform pfCerol;
 
     public Transform pfBlockHead;
     public Transform pfBlockBody;
@@ -31,5 +36,19 @@ public class GameAssets : MonoBehaviour
     public Transform pfGroundWax;
     public Transform pfBackgroundWax;
 
+    public AudioClip start;
+    public AudioClip death;
 
+
+    public void playStart()
+    {
+        audioSource.PlayOneShot(start, volume);
+
+    }
+
+    public void playDeath()
+    {
+        audioSource.PlayOneShot(death, volume);
+
+    }
 }
